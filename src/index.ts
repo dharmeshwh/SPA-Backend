@@ -2,7 +2,6 @@ import app from "./app";
 import dotenv from "dotenv";
 import * as http from "http";
 import { databaseConfig } from "./typeorm/config/dbConfig";
-import { User } from "./typeorm/entity/User";
 
 dotenv.config();
 
@@ -11,7 +10,6 @@ const run = async () => {
     const PORT = process.env.PORT;
     await databaseConfig.initialize();
     const server = http.createServer(app);
-    console.log({ x: await databaseConfig.getRepository(User).find({}) });
 
     // Start the server
     server.listen(PORT, async () => {

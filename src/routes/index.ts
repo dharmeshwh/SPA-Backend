@@ -1,4 +1,10 @@
 import express from "express";
-const apiRouter = express.Router();
+import authRoutes from "./authentication";
+import imageRoutes from "./image";
+const apiRoutes = express.Router();
 
-export = apiRouter;
+apiRoutes.use("/authentication", authRoutes);
+
+apiRoutes.use("/", imageRoutes);
+
+export = apiRoutes;
