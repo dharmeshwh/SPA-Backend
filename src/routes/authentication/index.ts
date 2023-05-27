@@ -3,6 +3,8 @@ import authController from "../../controllers/authentication";
 import { loginContract, signupContract } from "./contract";
 import { validate } from "../../middleware/validater";
 import { hashPassword } from "../../middleware/bcrypt";
+import passport from "passport";
+import { passportService } from "../../configs/passport/passport.service";
 
 const authRoutes = express.Router();
 
@@ -14,5 +16,20 @@ authRoutes.post(
 );
 
 authRoutes.post("/login", validate(loginContract), authController.login);
+
+// Auth
+authRoutes.get(
+  "/",
+  passport.authenticate("google", { scope: ["profile", "email"] })
+);
+
+// Auth Callback
+authRoutes.get(
+  "/callback",
+  passport.authenticate("google", {
+    failureRedirect: "/auth/callback/failure",
+  }),
+  passportService.handleOauthCookies
+);
 
 export = authRoutes;

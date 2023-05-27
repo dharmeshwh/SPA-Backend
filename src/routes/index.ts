@@ -1,10 +1,11 @@
 import express from "express";
 import authRoutes from "./authentication";
 import imageRoutes from "./image";
+import { validateRoute } from "../middleware/tokenHandler";
 const apiRoutes = express.Router();
 
-apiRoutes.use("/authentication", authRoutes);
+apiRoutes.use("/auth", authRoutes);
 
-apiRoutes.use("/", imageRoutes);
+apiRoutes.use("/", validateRoute, imageRoutes);
 
 export = apiRoutes;

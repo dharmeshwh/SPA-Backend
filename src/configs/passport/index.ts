@@ -5,7 +5,7 @@ import {
   VerifyCallback,
 } from "passport-google-oauth2";
 import dotenv from "dotenv";
-import CustomValidation from "../utils/customValidation";
+import CustomValidation from "../../utils/customValidation";
 
 dotenv.config();
 
@@ -37,7 +37,7 @@ export = () => {
           const userDetails = await CustomValidation.validateGoogleUser(
             profile
           );
-          request[`user`] = userDetails;
+          request.body[`user`] = { ...userDetails };
           return done(null, userDetails);
         } catch (error: Error | any) {
           console.log(`[Error] - ${error.message}`);

@@ -1,9 +1,9 @@
 import { Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";
-import CustomValidation from "../../utils/customValidation";
 import bcrypt from "bcrypt";
 import { databaseConfig } from "../../typeorm/config/dbConfig";
 import { UserProfile } from "../../typeorm/entity/User";
+import { passportService } from "../../configs/passport/passport.service";
 
 class AuthController {
   /**
@@ -86,18 +86,14 @@ class AuthController {
       const isPasswordValid = await bcrypt.compare(password, user.password);
 
       if (!isPasswordValid) {
-        //   // If the password is invalid, return unauthorized response
         return response
           .status(StatusCodes.UNAUTHORIZED)
           .send({ status: false, message: "username or password in invalid!" });
       }
-      console.log({ user });
 
-      // Generate a JWT token for authentication
-      const token = CustomValidation.getJwtToken(user.username, user.id);
+      request.body[`user`] = user;
 
-      // Return the success response with the token
-      return response.status(StatusCodes.OK).send({ status: true, token });
+      return passportService.handleOauthCookies(request, response);
     } catch (error: Error | any) {
       return response
         .status(StatusCodes.INTERNAL_SERVER_ERROR)

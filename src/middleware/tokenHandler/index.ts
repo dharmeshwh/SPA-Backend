@@ -28,9 +28,10 @@ const validateRoute = async (
 ) => {
   try {
     // Get the JWT token from the request header
-    const jwtToken = request.get("token");
+    const authCookie = request.signedCookies[`AUTH_COOKIE`];
+
     // Verify the token and get the user credentials
-    const userCreds = await verifyToken(jwtToken);
+    const userCreds = await verifyToken(authCookie);
 
     // Assign the user credentials to the `request.user` object
     request[`user`] = {
