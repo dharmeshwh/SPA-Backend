@@ -6,8 +6,10 @@ import { hashPassword } from "../../middleware/bcrypt";
 import passport from "passport";
 import { passportService } from "../../configs/passport/passport.service";
 
+// Create an instance of Express Router
 const authRoutes = express.Router();
 
+// Route for user signup
 authRoutes.post(
   "/signup",
   validate(signupContract),
@@ -15,17 +17,19 @@ authRoutes.post(
   authController.signup
 );
 
+// Route for user login
 authRoutes.post("/login", validate(loginContract), authController.login);
 
+// Route for user logout
 authRoutes.post("/logout", authController.logout);
 
-// Auth
+// Route for initiating Google OAuth
 authRoutes.get(
   "/",
   passport.authenticate("google", { scope: ["profile", "email"] })
 );
 
-// Auth Callback
+// Route for Google OAuth callback
 authRoutes.get(
   "/callback",
   passport.authenticate("google", {
@@ -34,4 +38,5 @@ authRoutes.get(
   passportService.handleOauthCallback
 );
 
+// Export the authRoutes
 export = authRoutes;

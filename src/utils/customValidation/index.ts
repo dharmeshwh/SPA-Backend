@@ -30,6 +30,8 @@ class CustomValidationClass {
 
   async validateGoogleUser(profile: any) {
     const userRepo = databaseConfig.getRepository(UserProfile);
+
+    // Check if the user already exists in the database
     const isUserExists = await userRepo.findOne({
       where: {
         id: profile?.id,
@@ -37,15 +39,22 @@ class CustomValidationClass {
     });
 
     if (isUserExists) {
+      // Return the existing user profile
       return isUserExists;
     }
+
+    // Create a new user profile
     const newUser = new UserProfile();
     newUser.firstname = profile?.given_name;
     newUser.lastname = profile?.family_name;
     newUser.email = profile?.email;
     newUser.username = profile?.displayName;
     newUser.id = profile?.id;
+
+    // Save the new user profile in the database
     const savedUser = await userRepo.save(newUser);
+
+    // Return the saved user profile
     return savedUser;
   }
 
@@ -53,19 +62,26 @@ class CustomValidationClass {
     try {
       const { user } = request.body;
 
+      // Generate a JWT token for authentication
       const authToken = CustomValidation.getJwtToken(user?.username, user?.id);
 
+      // Set the authentication cookie in the response
       response.cookie("AUTH_COOKIE", String(authToken), {
         httpOnly: true,
         signed: true,
         secure: true,
         sameSite: "none",
       });
+
       if (isGoogleOauth) {
-        return response.redirect("http://localhost:3000/");
+        // Redirect to the home page for Google OAuth
+        return response.redirect(String(process.env.UI_BASE_URL));
       }
+
+      // Send a success response with status true
       return response.status(StatusCodes.OK).send({ status: true });
     } catch (error: Error | any) {
+      // Throw any errors that occur during the process
       throw error;
     }
   }

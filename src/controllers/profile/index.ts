@@ -31,4 +31,4 @@ class ProfileController {
   }
 }
 
-export const profileConroller = new ProfileController();
+export const profileController = new ProfileController();

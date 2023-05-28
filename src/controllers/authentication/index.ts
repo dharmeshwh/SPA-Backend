@@ -3,7 +3,6 @@ import { StatusCodes } from "http-status-codes";
 import bcrypt from "bcrypt";
 import { databaseConfig } from "../../typeorm/config/dbConfig";
 import { UserProfile } from "../../typeorm/entity/User";
-import { passportService } from "../../configs/passport/passport.service";
 import CustomValidation from "../../utils/customValidation";
 
 class AuthController {
@@ -45,9 +44,11 @@ class AuthController {
       const userDetails = await profileRepo.save(user);
 
       // Return the success response with the user details
-      return response
-        .status(StatusCodes.OK)
-        .send({ status: true, data: userDetails });
+      return response.status(StatusCodes.OK).send({
+        status: true,
+        data: userDetails,
+        message: "Signup Successfully!",
+      });
     } catch (error: Error | any) {
       return response
         .status(StatusCodes.INTERNAL_SERVER_ERROR)
@@ -89,7 +90,7 @@ class AuthController {
       if (!isPasswordValid) {
         return response
           .status(StatusCodes.UNAUTHORIZED)
-          .send({ status: false, message: "username or password in invalid!" });
+          .send({ status: false, message: "username or password is invalid!" });
       }
 
       request.body[`user`] = user;
@@ -106,6 +107,7 @@ class AuthController {
     try {
       const cookieName = "AUTH_COOKIE";
 
+      // Clear the authentication cookie in the response
       response.clearCookie(cookieName, {
         httpOnly: true,
         signed: true,
@@ -113,8 +115,10 @@ class AuthController {
         sameSite: "none",
       });
 
+      // Return a success response
       response.json({ status: true });
     } catch (error: Error | any) {
+      // Return an error response if there's an issue with logging out
       return response
         .status(StatusCodes.INTERNAL_SERVER_ERROR)
         .send({ status: false, message: error.message });

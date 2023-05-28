@@ -6,22 +6,28 @@ import cookieSession from "cookie-session";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 
+// Create Express app
 const app = express();
 
+// Configure cookie parser
 app.use(cookieParser("CookieSecret"));
 
+// Parse JSON bodies
 app.use(express.json());
 
+// Enable CORS with specified options
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: process.env.UI_BASE_URL,
     methods: ["POST", "PUT", "GET", "OPTIONS", "HEAD"],
     credentials: true,
   })
 );
 
+// Configure OAuth
 oauthConfig();
 
+// Configure cookie session
 app.use(
   cookieSession({
     name: "google-auth-session",
@@ -29,9 +35,12 @@ app.use(
   })
 );
 
+// API routes
 app.use("/", apiRoutes);
 
+// Initialize passport middleware
 app.use(passport.initialize());
 app.use(passport.session());
 
+// Export the Express app
 export = app;

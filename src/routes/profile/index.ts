@@ -1,8 +1,11 @@
 import express from "express";
-import { profileConroller } from "../../controllers/profile";
+import { profileController } from "../../controllers/profile";
 
+// Create an instance of Express Router
 const profileRoutes = express.Router();
 
-profileRoutes.get("/user-details", profileConroller.getUserDetails);
+// Route for fetching user details
+profileRoutes.get("/user-details", profileController.getUserDetails);
 
+// Export the profileRoutes
 export = profileRoutes;
