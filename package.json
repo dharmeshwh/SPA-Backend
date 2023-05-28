@@ -2,10 +2,10 @@
   "name": "SPA-Backend",
   "version": "1.0.0",
   "description": "",
-  "main": "src/index.ts",
+  "main": "index.ts",
   "scripts": {
-    "start": "ts-node src/index.ts",
-    "dev": "nodemon src/index.ts"
+    "start": "ts-node index.ts",
+    "dev": "nodemon index.ts"
   },
   "repository": {
     "type": "git",
