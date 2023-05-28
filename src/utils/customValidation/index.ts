@@ -67,6 +67,7 @@ class CustomValidationClass {
         signed: true,
         secure: true,
         sameSite: "none",
+        path: "/",
       });
 
       if (isGoogleOauth) {
