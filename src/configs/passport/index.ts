@@ -26,7 +26,7 @@ export = () => {
       {
         clientID: String(process.env.CLIENT_ID),
         clientSecret: String(process.env.CLIENT_SECRET),
-        callbackURL: "http://localhost:4009/auth/callback",
+        callbackURL: "https://edsfdc.onrender.com/auth/callback",
         passReqToCallback: true,
       },
       async function (
