@@ -6,7 +6,7 @@ import cookieSession from "cookie-session";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 
-// Create Express app // test
+// Create Express app
 const app = express();
 
 // Configure cookie parser
