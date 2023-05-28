@@ -1,6 +1,9 @@
 import { Request } from "express";
 import passport from "passport";
-import { Strategy as GoogleStrategy, VerifyCallback } from "passport-google-oauth2";
+import {
+  Strategy as GoogleStrategy,
+  VerifyCallback,
+} from "passport-google-oauth2";
 import dotenv from "dotenv";
 import CustomValidation from "../../utils/customValidation";
 
@@ -35,14 +38,18 @@ export = () => {
       ) {
         try {
           // Validate Google user
-          const userDetails = await CustomValidation.validateGoogleUser(profile);
+          const userDetails = await CustomValidation.validateGoogleUser(
+            profile
+          );
 
           // Attach user details to request body
-          request.body[`user`] = { ...userDetails };
+          request.body[`user`] = {
+            _id: userDetails?._id,
+            username: userDetails?.username,
+          };
 
           return done(null, userDetails);
         } catch (error: Error | any) {
-          console.log(`[Error] - ${error.message}`);
           throw error;
         }
       }

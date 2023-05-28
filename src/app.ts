@@ -18,7 +18,7 @@ app.use(express.json());
 // Enable CORS with specified options
 app.use(
   cors({
-    origin: "*",
+    origin: "http://localhost:3000",
     credentials: true,
   })
 );
@@ -42,4 +42,5 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 // Export the Express app
+
 export = app;

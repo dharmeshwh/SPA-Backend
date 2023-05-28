@@ -1,38 +1,17 @@
 import app from "./app";
 import dotenv from "dotenv";
-import * as http from "http";
-import { databaseConfig } from "./typeorm/config/dbConfig";
+import { dbConfig } from "./configs/database/dbConfig";
 
 dotenv.config();
+const PORT = process.env.PORT;
 
-const run = async () => {
+
+
+app.listen(PORT, async () => {
   try {
-    const PORT = process.env.PORT;
-    await databaseConfig.initialize();
-    const server = http.createServer(app);
-
-    // Start the server
-    server.listen(PORT, async () => {
-      console.info(`listening on port ${PORT}`);
-    });
-
-    // Event handler for server errors
-    server.on("error", async (err) => {
-      if (err) {
-        await databaseConfig.destroy();
-        console.error("Server crashed while listening", err);
-        throw err;
-      }
-    });
-
-    // Event handler for server close
-    server.on("close", async () => {
-      await databaseConfig.destroy();
-      console.warn("Closing server connection");
-    });
+    await dbConfig();
+    console.log(`listning on port - ${PORT}`);
   } catch (error: Error | any) {
-    console.log(`Erron while executing run function - ${error.message}`);
+    console.error(`[Error] - ${error.message}`);
   }
-};
-
-run();
+});

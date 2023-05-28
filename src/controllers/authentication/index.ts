@@ -1,9 +1,8 @@
 import { Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";
 import bcrypt from "bcrypt";
-import { databaseConfig } from "../../typeorm/config/dbConfig";
-import { UserProfile } from "../../typeorm/entity/User";
 import CustomValidation from "../../utils/customValidation";
+import UserModel from "../../modals/User.modal";
 
 class AuthController {
   /**
@@ -17,12 +16,10 @@ class AuthController {
    */
   async signup(request: Request, response: Response) {
     try {
-      const { firstName, lastName, email, password, username } = request.body;
+      const { firstname, lastname, email, password, username } = request.body;
 
-      const profileRepo = databaseConfig.getRepository(UserProfile);
-
-      const isUserAlreadyExists = await profileRepo.findOne({
-        where: { email },
+      const isUserAlreadyExists = await UserModel.findOne({
+        username,
       });
 
       if (isUserAlreadyExists) {
@@ -33,15 +30,15 @@ class AuthController {
       }
 
       // Create a new UserProfile instance and set its properties
-      const user = new UserProfile();
-      user.firstname = firstName;
-      user.lastname = lastName;
+      const user = new UserModel();
+      user.firstname = firstname;
+      user.lastname = lastname;
       user.email = email;
       user.password = password;
       user.username = username;
 
       // Save the new user profile to the database
-      const userDetails = await profileRepo.save(user);
+      const userDetails = await user.save();
 
       // Return the success response with the user details
       return response.status(StatusCodes.OK).send({
@@ -70,11 +67,8 @@ class AuthController {
     try {
       const { username, password } = request.body;
 
-      const user = await databaseConfig.getRepository(UserProfile).findOne({
-        where: {
-          username,
-        },
-        select: ["password", "username", "id"],
+      const user = await UserModel.findOne({
+        username,
       });
 
       if (!user) {
@@ -85,7 +79,10 @@ class AuthController {
       }
 
       // Compare the provided password with the hashed password stored in the database
-      const isPasswordValid = await bcrypt.compare(password, user.password);
+      const isPasswordValid = await bcrypt.compare(
+        password,
+        String(user?.password)
+      );
 
       if (!isPasswordValid) {
         return response

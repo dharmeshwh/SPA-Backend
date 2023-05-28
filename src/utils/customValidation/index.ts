@@ -1,10 +1,9 @@
 import Joi from "joi";
 import jwt from "jsonwebtoken";
 import { ObjectId } from "mongodb";
-import { databaseConfig } from "../../typeorm/config/dbConfig";
-import { UserProfile } from "../../typeorm/entity/User";
 import { StatusCodes } from "http-status-codes";
 import { Request, Response } from "express";
+import UserModel from "../../modals/User.modal";
 
 class CustomValidationClass {
   passwordValidation(name: string) {
@@ -29,13 +28,10 @@ class CustomValidationClass {
   }
 
   async validateGoogleUser(profile: any) {
-    const userRepo = databaseConfig.getRepository(UserProfile);
-
     // Check if the user already exists in the database
-    const isUserExists = await userRepo.findOne({
-      where: {
-        id: profile?.id,
-      },
+
+    const isUserExists = await UserModel.findOne({
+      $or: [{ email: profile?.email }, { oauthid: profile?.id }],
     });
 
     if (isUserExists) {
@@ -44,15 +40,15 @@ class CustomValidationClass {
     }
 
     // Create a new user profile
-    const newUser = new UserProfile();
+    const newUser = new UserModel();
     newUser.firstname = profile?.given_name;
     newUser.lastname = profile?.family_name;
     newUser.email = profile?.email;
     newUser.username = profile?.displayName;
-    newUser.id = profile?.id;
+    newUser.oauthid = profile?.id;
 
     // Save the new user profile in the database
-    const savedUser = await userRepo.save(newUser);
+    const savedUser = await newUser.save();
 
     // Return the saved user profile
     return savedUser;
@@ -63,7 +59,7 @@ class CustomValidationClass {
       const { user } = request.body;
 
       // Generate a JWT token for authentication
-      const authToken = CustomValidation.getJwtToken(user?.username, user?.id);
+      const authToken = CustomValidation.getJwtToken(user?.username, user?._id);
 
       // Set the authentication cookie in the response
       response.cookie("AUTH_COOKIE", String(authToken), {
