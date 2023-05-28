@@ -15,6 +15,9 @@ app.use(cookieParser("CookieSecret"));
 // Parse JSON bodies
 app.use(express.json());
 
+app.get("/test", (req, res) => {
+  res.status(200).send("this is test route");
+});
 // Enable CORS with specified options
 app.use(
   cors({
