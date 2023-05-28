@@ -16,9 +16,13 @@ app.use(cookieParser("CookieSecret"));
 app.use(express.json());
 
 // Enable CORS with specified options
-app.use(cors({ origin: "*" }));
-
-app.use(express.urlencoded({ extended: false }));
+app.use(
+  cors({
+    origin: process.env.UI_BASE_URL,
+    methods: ["POST", "PUT", "GET", "OPTIONS", "HEAD"],
+    credentials: true,
+  })
+);
 
 // Configure OAuth
 oauthConfig();
@@ -39,5 +43,4 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 // Export the Express app
-
 export = app;
