@@ -16,7 +16,7 @@ app.use(cookieParser("CookieSecret"));
 app.use(express.json());
 
 // Enable CORS with specified options
-app.use(cors());
+app.use(cors({ origin: "http://localhost:3000" }));
 
 app.use(express.urlencoded({ extended: false }));
 
