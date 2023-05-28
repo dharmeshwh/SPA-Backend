@@ -1,5 +1,6 @@
+import { ObjectId } from "typeorm";
+
 export interface IVerifyTokenResponse {
-    userName: string;
-    userId: string;
-  }
-  
+  username: string;
+  userId: ObjectId;
+}

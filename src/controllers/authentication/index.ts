@@ -4,6 +4,7 @@ import bcrypt from "bcrypt";
 import { databaseConfig } from "../../typeorm/config/dbConfig";
 import { UserProfile } from "../../typeorm/entity/User";
 import { passportService } from "../../configs/passport/passport.service";
+import CustomValidation from "../../utils/customValidation";
 
 class AuthController {
   /**
@@ -93,7 +94,26 @@ class AuthController {
 
       request.body[`user`] = user;
 
-      return passportService.handleOauthCookies(request, response);
+      return CustomValidation.handleCookies(request, response);
+    } catch (error: Error | any) {
+      return response
+        .status(StatusCodes.INTERNAL_SERVER_ERROR)
+        .send({ status: false, message: error.message });
+    }
+  }
+
+  async logout(_request: Request, response: Response) {
+    try {
+      const cookieName = "AUTH_COOKIE";
+
+      response.clearCookie(cookieName, {
+        httpOnly: true,
+        signed: true,
+        secure: true,
+        sameSite: "none",
+      });
+
+      response.json({ status: true });
     } catch (error: Error | any) {
       return response
         .status(StatusCodes.INTERNAL_SERVER_ERROR)

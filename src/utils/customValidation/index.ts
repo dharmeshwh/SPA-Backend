@@ -3,6 +3,8 @@ import jwt from "jsonwebtoken";
 import { ObjectId } from "mongodb";
 import { databaseConfig } from "../../typeorm/config/dbConfig";
 import { UserProfile } from "../../typeorm/entity/User";
+import { StatusCodes } from "http-status-codes";
+import { Request, Response } from "express";
 
 class CustomValidationClass {
   passwordValidation(name: string) {
@@ -19,9 +21,9 @@ class CustomValidationClass {
       });
   }
 
-  getJwtToken(userName: string, userId: ObjectId) {
+  getJwtToken(username: string, userId: ObjectId) {
     const jwtSecret = process.env.JWT_SECRET || "";
-    return jwt.sign({ userName, userId }, jwtSecret, {
+    return jwt.sign({ username, userId }, jwtSecret, {
       expiresIn: 60 * 60 * 12,
     });
   }
@@ -45,6 +47,27 @@ class CustomValidationClass {
     newUser.id = profile?.id;
     const savedUser = await userRepo.save(newUser);
     return savedUser;
+  }
+
+  handleCookies(request: Request, response: Response, isGoogleOauth = false) {
+    try {
+      const { user } = request.body;
+
+      const authToken = CustomValidation.getJwtToken(user?.username, user?.id);
+
+      response.cookie("AUTH_COOKIE", String(authToken), {
+        httpOnly: true,
+        signed: true,
+        secure: true,
+        sameSite: "none",
+      });
+      if (isGoogleOauth) {
+        return response.redirect("http://localhost:3000/");
+      }
+      return response.status(StatusCodes.OK).send({ status: true });
+    } catch (error: Error | any) {
+      throw error;
+    }
   }
 }
 

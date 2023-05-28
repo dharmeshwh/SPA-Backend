@@ -4,12 +4,21 @@ import oauthConfig from "./configs/passport";
 import passport from "passport";
 import cookieSession from "cookie-session";
 import cookieParser from "cookie-parser";
+import cors from "cors";
 
 const app = express();
 
 app.use(cookieParser("CookieSecret"));
 
 app.use(express.json());
+
+app.use(
+  cors({
+    origin: "http://localhost:3000",
+    methods: ["POST", "PUT", "GET", "OPTIONS", "HEAD"],
+    credentials: true,
+  })
+);
 
 oauthConfig();
 
@@ -20,9 +29,6 @@ app.use(
   })
 );
 
-app.get("/", (req, res) => {
-  res.send("<button><a href='/auth'>Login With Google</a></button>");
-});
 app.use("/", apiRoutes);
 
 app.use(passport.initialize());

@@ -17,6 +17,8 @@ authRoutes.post(
 
 authRoutes.post("/login", validate(loginContract), authController.login);
 
+authRoutes.post("/logout", authController.logout);
+
 // Auth
 authRoutes.get(
   "/",
@@ -29,7 +31,7 @@ authRoutes.get(
   passport.authenticate("google", {
     failureRedirect: "/auth/callback/failure",
   }),
-  passportService.handleOauthCookies
+  passportService.handleOauthCallback
 );
 
 export = authRoutes;

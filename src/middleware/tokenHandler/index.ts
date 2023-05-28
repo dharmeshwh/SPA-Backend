@@ -36,7 +36,7 @@ const validateRoute = async (
     // Assign the user credentials to the `request.user` object
     request[`user`] = {
       userId: userCreds?.userId,
-      username: userCreds?.userName,
+      username: userCreds?.username,
     };
 
     next();
