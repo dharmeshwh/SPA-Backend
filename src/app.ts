@@ -16,12 +16,9 @@ app.use(cookieParser("CookieSecret"));
 app.use(express.json());
 
 // Enable CORS with specified options
-app.use(
-  cors({
-    origin: process.env.UI_BASE_URL,
-    credentials: true,
-  })
-);
+app.use(cors());
+
+app.use(express.urlencoded({ extended: false }));
 
 // Configure OAuth
 oauthConfig();
