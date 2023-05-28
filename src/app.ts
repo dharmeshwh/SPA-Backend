@@ -18,7 +18,7 @@ app.use(express.json());
 // Enable CORS with specified options
 app.use(
   cors({
-    origin: process.env.UI_BASE_URL,
+    origin: "*",
     credentials: true,
   })
 );
